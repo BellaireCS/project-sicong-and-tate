@@ -4,17 +4,16 @@ import java.awt.Color;
 
 public class Player {
 
-	public final static int spriteSpeed = 5;
+	public final static int SPRITE_SPEED = 5;
+	public final static int SPRITE_RADIUS = 20;
 
 	private int xCoordinate;
 	private int yCoordinate;
-	private final int radius;
 	private final Color color;
 
-	public Player(int xCoordinate, int yCoordinate, int radius, Color color) {
+	public Player(int xCoordinate, int yCoordinate, Color color) {
 		this.xCoordinate = xCoordinate;
 		this.yCoordinate = yCoordinate;
-		this.radius = radius;
 		this.color = color;
 	}
 
@@ -34,8 +33,8 @@ public class Player {
 		yCoordinate = y;
 	}
 
-	public int getRadius() {
-		return radius;
+	public int[] getCoordinates() {
+		return new int[] { xCoordinate, yCoordinate };
 	}
 
 	public Color getColor() {
