@@ -22,12 +22,15 @@ public class Game {
 	private Player student;
 	private Player peer;
 	private Player teacher;
+	private Thread gameThread;
+	private Thread teacherAI;
+	private Thread checkGameConditionThread;
 
 	@SuppressWarnings("serial")
 	public Game() {
 		/* Initialize game components */
 		coordinates = generateCoordinates();
-		student = new Player(0, 0, Color.BLUE);
+		student = new Player(1, 1, Color.BLUE);
 		peer = new Player(0, 0, Color.GREEN);
 		assignRandomSeating();
 
@@ -74,6 +77,54 @@ public class Game {
 				 */
 			}
 		};
+
+		/*
+		 * Initialize Threads
+		 */
+
+		gameThread = new Thread(() -> {
+			initUI();
+		});
+
+		checkGameConditionThread = new Thread(() -> {
+			while (true) {
+				System.out.print("");
+				if (hasCollided(student, peer)) {
+					showGameOver("You have won!");
+				}
+
+				if (hasCollided(student, teacher)) {
+					showGameOver("You have been caught by the teacher!");
+				}
+
+				if (!isInBounds()) {
+					showGameOver("You have jumped out of a window to your death!");
+				}
+			}
+		});
+
+		teacherAI = new Thread(() -> {
+			while (true) {
+				if (!hasCollided(student, teacher)) {
+					moveTeacher();
+					try {
+						Thread.sleep(45);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+	}
+
+	/*
+	 * Run Game
+	 */
+	public void go() {
+		gameThread.start();
+		checkGameConditionThread.start();
+		teacherAI.start();
 
 	}
 
@@ -127,6 +178,19 @@ public class Game {
 		win.setVisible(true);
 	}
 
+	public void moveTeacher() {
+		if (teacher.getX() < student.getX())
+			teacher.setX(teacher.getX() + 1);
+		if (teacher.getY() < student.getY())
+			teacher.setY(teacher.getY() + 1);
+		if (teacher.getX() > student.getX())
+			teacher.setX(teacher.getX() - 1);
+		if (teacher.getY() > student.getY())
+			teacher.setY(teacher.getY() - 1);
+		gamePanel.repaint();
+
+	}
+
 	/*
 	 * Shows how bad of a player you are
 	 */
@@ -148,7 +212,10 @@ public class Game {
 	 */
 	public void restart() {
 		assignRandomSeating();
+		teacher.setX(250);
+		teacher.setY(10);
 		gamePanel.repaint();
+
 	}
 
 	/*
@@ -201,46 +268,15 @@ public class Game {
 	/*
 	 * Checks for win
 	 */
-	public boolean hasWon() {
-		return student.getX() < peer.getX() + Player.SPRITE_RADIUS
-				&& student.getX() + Player.SPRITE_RADIUS > peer.getX()
-				&& student.getY() < peer.getY() + Player.SPRITE_RADIUS
-				&& student.getY() + Player.SPRITE_RADIUS > peer.getY();
+	public boolean hasCollided(Player p1, Player p2) {
+		return p1.getX() < p2.getX() + Player.SPRITE_RADIUS && p1.getX() + Player.SPRITE_RADIUS > p2.getX()
+				&& p1.getY() < p2.getY() + Player.SPRITE_RADIUS && p1.getY() + Player.SPRITE_RADIUS > p2.getY();
 	}
 
 	public static void main(String[] args) {
 
 		Game theGame = new Game();
-
-		Thread gameThread = new Thread(() -> {
-			System.out.println("Starting Game...");
-			theGame.initUI();
-		});
-
-		Thread checkInBoundsThread = new Thread(() -> {
-
-			System.out.println("Checking boundedness...");
-			while (true) {
-				System.out.print("");
-				if (!theGame.isInBounds()) {
-					theGame.showGameOver("You have jumped out of a window to your death!");
-				}
-			}
-		});
-
-		Thread checkWinThread = new Thread(() -> {
-			while (true) {
-				System.out.print("");
-				if (theGame.hasWon()) {
-					theGame.showGameOver("You have won!");
-				}
-			}
-		});
-
-		checkInBoundsThread.start();
-		gameThread.start();
-		checkWinThread.start();
-
+		theGame.go();
 	}
 
 }

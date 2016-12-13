@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class Player {
 
-	public final static int SPRITE_SPEED = 5;
+	public final static int SPRITE_SPEED = 4;
 	public final static int SPRITE_RADIUS = 20;
 
 	private int xCoordinate;
