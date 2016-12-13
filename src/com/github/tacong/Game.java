@@ -22,7 +22,6 @@ public class Game {
 	private Player student;
 	private Player peer;
 	private Player teacher;
-	private Thread gameThread;
 	private Thread teacherAI;
 	private Thread checkGameConditionThread;
 
@@ -82,10 +81,6 @@ public class Game {
 		 * Initialize Threads
 		 */
 
-		gameThread = new Thread(() -> {
-			initUI();
-		});
-
 		checkGameConditionThread = new Thread(() -> {
 			while (true) {
 				System.out.print("");
@@ -105,13 +100,11 @@ public class Game {
 
 		teacherAI = new Thread(() -> {
 			while (true) {
-				if (!hasCollided(student, teacher)) {
-					moveTeacher();
-					try {
-						Thread.sleep(45);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+				moveTeacher();
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -122,7 +115,7 @@ public class Game {
 	 * Run Game
 	 */
 	public void go() {
-		gameThread.start();
+		initUI();
 		checkGameConditionThread.start();
 		teacherAI.start();
 
