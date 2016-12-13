@@ -64,16 +64,6 @@ public class Game {
 					}
 				}
 
-				// Display the teacher's line of sight
-
-				/*
-				 * YET TO BE IMPLEMENTED
-				 * 
-				 * g2d.setColor(Color.YELLOW);
-				 * g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.
-				 * SRC_OVER, (float) 0.3)); g.fillRect(teacher.getX(),
-				 * teacher.getY(), 10, 450);
-				 */
 			}
 		};
 
